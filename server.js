@@ -93,8 +93,14 @@ app.get("/register", (req, res) => {
 });
 
 app.post("/admin", (req, res) => {
-  const patient = new Patient(req.body);
-  patient.save().then(() => {
+  const patient = JSON.parse(
+    // this line remove all space in (req.body)
+    JSON.stringify(req.body).replace(/"\s+|\s+"/g, '"')
+  );
+
+  console.log(patient);
+
+  new Patient(patient).save().then(() => {
     res.render("success", {
       subTitle: "Success",
       subject: "Added",
@@ -153,7 +159,15 @@ app.post("/update", (req, res) => {
 });
 
 app.post("/updateResults", (req, res) => {
-  Patient.findOneAndUpdate({ patientId: req.body.patientId }, req.body).then(
+  const patientData = JSON.parse(
+    // this line remove all space in (req.body)
+    JSON.stringify(req.body).replace(/"\s+|\s+"/g, '"')
+  );
+
+  console.log("patientData: ");
+  console.log(patientData);
+
+  Patient.findOneAndUpdate({ patientId: req.body.patientId }, patientData).then(
     () => {
       res.render("success", {
         subTitle: "Updated",
